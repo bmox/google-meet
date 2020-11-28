@@ -1,40 +1,78 @@
+import pyaudio
+import wave
+import os 
 import pyautogui
-import pytesseract
-import os
-from PIL import Image
+import speech_recognition as sr
 import random
-import time
+try:
+    j=0
+    while True:
+        
+        CHUNK = 1024
+        FORMAT = pyaudio.paInt16
+        CHANNELS = 2
+        RATE = 44100
+        RECORD_SECONDS = 5
 
-i=0
-# https://github.com/UB-Mannheim/tesseract/wiki 
-#Download tesseract-ocr-w64-setup-v5.0.0-alpha.20200328.exe (64 bit) resp.
-while True:
-    screenshot = pyautogui.screenshot(region=(0,778, 1376, 776))
-    file_name=str(i)+".png"
-    screenshot.save(file_name)
-    print("Scan ",file_name)
-    i+=1
-    pytesseract.pytesseract.tesseract_cmd=r"path_where_you_install_the_file\tesseract.exe"
-    img=Image.open(file_name)
-    scan_text=pytesseract.image_to_string(img)
-    get_text=scan_text.split()
-    target_text=["alex","Alex","alex.","ALEX.","Alex?","Alex.","l x","lx","L X""Lx","Lx.","lx."]
-    output = ["hmm","net slow","yes","yes sir","sir sona jache na","sir arekbar repeat korun","net kub slow","hmmm"]
-    choice=random.choice(output)
-    for target in get_text:
-        if target in target_text:
-            pyautogui.click(x=1525, y=1023)
-            pyautogui.write(choice)#, interval=0.25) 
-            pyautogui.press('enter') 
-            time.sleep(4)
-            print("ok we got it")
+
+        p = pyaudio.PyAudio()
+        WAVE_OUTPUT_FILENAME = str(j)+".wav"
+            
+        stream = p.open(format=FORMAT,
+                        channels=CHANNELS,
+                        rate=RATE,
+                        input=True,
+                        frames_per_buffer=CHUNK)
+
+        print("* recording")
+
+        frames = []
+
+        for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+            data = stream.read(CHUNK)
+            frames.append(data)
+
+        print("* done recording")
+
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+
+        wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+        wf.setnchannels(CHANNELS)
+        wf.setsampwidth(p.get_sample_size(FORMAT))
+        wf.setframerate(RATE)
+        wf.writeframes(b''.join(frames))
+        wf.close()
+
+        try:
+            filename = WAVE_OUTPUT_FILENAME
+            r = sr.Recognizer()
+            with sr.AudioFile(filename) as source:
+          
+                audio_data = r.record(source)
+                
+                text = r.recognize_google(audio_data)
+                print(text)
+            os.remove(WAVE_OUTPUT_FILENAME)
+            get_text=text.split()
+            #In target_text give bunch of your name in different way 
+            target_text=["Alex","alex.","ALEX.","Alex?","Alex."]
+            #output=[ "what response you want"]
+            output = ["hmm","internet slow","yes","yes sir","Sir I can't hear you","sir can you repeat again","internet is very slow","hmmm"]
+            choice=random.choice(output)
+            for target in get_text:
+                if target in target_text:
+                    
+                    pyautogui.click(x=400, y=600)
+                    #remove ")#" for slow typing
+                    pyautogui.write(choice)#, interval=0.25) 
+                    pyautogui.press('enter') 
+                    print("")
+                    continue
+        except:
             continue
 
-    os.remove(file_name)
-    print("Destroy ",file_name)
-    
-    
-
-
-
-
+        j+=1
+except:
+    print("Close Everything and run again")
