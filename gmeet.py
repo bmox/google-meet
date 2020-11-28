@@ -59,7 +59,7 @@ try:
             #In target_text give bunch of your name in different way 
             target_text=["Alex","alex.","ALEX.","Alex?","Alex."]
             #output=[ "what response you want"]
-            output = ["hmm","internet slow","yes","yes sir","Sir I can't hear you","sir can you repeat again","internet is very slow","hmmm"]
+            output = ["Yes","hmmm","I am here.","ok!"]
             choice=random.choice(output)
             for target in get_text:
                 if target in target_text:
