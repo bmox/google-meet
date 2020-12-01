@@ -56,7 +56,7 @@ Just replace the different names with your name. Also give your name in differen
 If you want to add more your name just write a coma and give quataion and add the name (```,"alexx"```).<br>
 
 Find 
-``` output = ["hmm","internet slow","yes","yes sir","Sir I can't hear you","sir can you repeat again","internet is very slow","hmmm"]```<br>
+``` output = ["hmm","ok","yes","yes sir","hello","I'm bot"]```<br>
 Replace the response with your response.
 
 # step 6
